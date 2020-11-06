@@ -1,0 +1,23 @@
+body {
+    background-color: rgb(40, 44, 52);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+    overflow: hidden;
+}
+
+#contenedor {
+    padding-top: 50px;
+    position: relative;
+    margin: auto;
+    width: 800px;
+    height: 300px;
+}
+
+canvas {
+    background-color: white;
+    width: 800px;
+    height: 300px;
+    border: 2px solid #000000;
+}
