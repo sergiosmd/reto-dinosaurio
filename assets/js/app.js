@@ -6,8 +6,22 @@ const height = 300;
 const gv = 2;
 const vX = 9;
 
+let gameOver = false;
+
+const dinoWidth = 100;
+const dinoHeight = 100;
+const dinoPosIniX = 100;
+
+const wallWidth = 50;
+
+let record = 0;
+
+const modelGround = {
+    posX: 0,
+};
+
 const space = () => {
-    return 200 * (Math.floor(Math.random() * 5) + 1);
+    return 200 * (Math.floor(Math.random() * 4) + 1);
 };
 
 const dinoModel = {
@@ -39,6 +53,17 @@ const gravityCanvas = () => {
     }
 };
 
+const isAlive = (wallPosX, wallHeight) => {
+    if (
+        dinoPosIniX <= wallPosX &&
+        wallPosX <= dinoPosIniX + dinoHeight &&
+        dinoModel.posY + dinoWidth > wallHeight
+    ) {
+        gameOver = true;
+        console.log("choco");
+    }
+};
+
 document.addEventListener("keydown", (event) => {
     const key = event.keyCode || event.code;
     if (key === "Space" || key == 32) {
@@ -54,25 +79,49 @@ const clear = () => {
 const loadImageDino = () => {
     const dino = new Image();
     dino.src = "./assets/img/trex.png";
-    context.drawImage(dino, 0, 0, 207, 219, 100, dinoModel.posY, 100, 100);
+    context.drawImage(
+        dino,
+        0,
+        0,
+        207,
+        219,
+        dinoPosIniX,
+        dinoModel.posY,
+        dinoHeight,
+        dinoWidth
+    );
 };
 
 const loadImagC = () => {
     const c = new Image();
     c.src = "./assets/img/C.png";
     context.drawImage(c, 0, 0, 50, 75, modelWall.posCX, 175, 50, 75);
+    isAlive(modelWall.posCX, 175);
+    isAlive(modelWall.posCX + wallWidth, 235);
+
     const o = new Image();
     o.src = "./assets/img/O.png";
     context.drawImage(o, 0, 0, 50, 75, modelWall.posOX, 200, 50, 75);
+    isAlive(modelWall.posOX, 200);
+    isAlive(modelWall.posOX + wallWidth, 255);
+
     const l = new Image();
     l.src = "./assets/img/L.png";
     context.drawImage(l, 0, 0, 50, 75, modelWall.posLX, 175, 50, 75);
+    isAlive(modelWall.posLX, 175);
+    isAlive(modelWall.posLX + wallWidth, 235);
+
     const a = new Image();
     a.src = "./assets/img/A.png";
     context.drawImage(a, 0, 0, 50, 75, modelWall.posAX, 200, 50, 75);
+    isAlive(modelWall.posAX, 200);
+    isAlive(modelWall.posAX + wallWidth, 255);
+
     const b = new Image();
     b.src = "./assets/img/B.png";
     context.drawImage(b, 0, 0, 50, 75, modelWall.posBX, 175, 50, 75);
+    isAlive(modelWall.posBX, 175);
+    isAlive(modelWall.posBX + wallWidth, 235);
 
     if (modelWall.posCX < -51) {
         modelWall.posCX = modelWall.posBX + space();
@@ -105,13 +154,40 @@ const loadImagC = () => {
     }
 };
 
+const loadGround = () => {
+    const ground = new Image();
+    ground.src = "./assets/img/suelo.png";
+    context.drawImage(ground, modelGround.posX, 0, 1600, 12, 0, 235, 1600, 12);
+
+    if (modelGround.posX > 800) {
+        modelGround.posX = 0;
+    } else {
+        modelGround.posX += vX;
+    }
+};
+
+const stats = () => {
+    context.font = "30px impact";
+    context.fillStyle = "#515151";
+    context.fillText("record: " + record, 550, 100);
+    record += 1;
+};
+
 const main = () => {
     gravityCanvas();
     loadImageDino();
+    loadGround();
     loadImagC();
+    stats();
 };
 
 setInterval(() => {
-    clear();
-    main();
+    if (!gameOver) {
+        clear();
+        main();
+    } else {
+        context.font = "50px impact";
+        context.fillStyle = "#515151";
+        context.fillText("Game Over", 250, 50);
+    }
 }, 1000 / fps);
